@@ -5,6 +5,8 @@ _G[modname] = {
     S = core.get_translator(modname)
 }
 
+local BASE_URL = core.settings:get(modname .. ".base_url") or "https://skybuilder.synology.me/display/convert"
+
 local S = _G[modname].S
 
 local pf = "[" .. modname .. "] "
@@ -146,8 +148,12 @@ core.register_chatcommand(modname, {
         else
             dir = d.z > 0 and "z+" or "z-"
         end
-        local url = "https://skybuilder.synology.me/display/convert?url="..core.formspec_escape(img_url)
+        local url = BASE_URL .. "?url="..core.formspec_escape(img_url)
         http.fetch({url=url, timeout=20}, function(res)
+            if res.timeout then
+                core.chat_send_player(name, pf.. S("Time out connection"))
+                return
+            end
             if not res.succeeded or res.code ~= 200 then
                 core.chat_send_player(name, pf.. S("HTTP error"))
                 return
