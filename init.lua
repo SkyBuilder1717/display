@@ -2,7 +2,8 @@ local modname = core.get_current_modname()
 
 _G[modname] = {
     pixels = {},
-    S = core.get_translator(modname)
+    S = core.get_translator(modname),
+    saved_pictures = {}
 }
 
 local BASE_URL = core.settings:get(modname .. ".base_url") or "https://skybuilder.synology.me/display/convert"
@@ -179,6 +180,16 @@ core.register_chatcommand(modname, {
             dir = d.z > 0 and "z+" or "z-"
         end
         local url = BASE_URL .. "?url="..core.formspec_escape(img_url)
+        local tbl = _G[modname].saved_pictures[url]
+        if tbl then
+            core.chat_send_player(name, S("Saved picture found!"))
+            remove_image(name)
+            local ok = render_image(pos, tbl, size, rot, dir, name)
+            if not ok then
+                return false, pf.. S("Render failed")
+            end
+            return true, pf.. S("Done")
+        end
         http.fetch({url = url, timeout = 20}, function(res)
             if res.timeout then
                 core.chat_send_player(name, pf.. S("Time out connection"))
@@ -197,6 +208,7 @@ core.register_chatcommand(modname, {
                 core.chat_send_player(name, pf.. S("Server error: @1", tbl.error))
                 return
             end
+            _G[modname].saved_pictures[url] = tbl
             remove_image(name)
             local ok = render_image(pos, tbl, size, rot, dir, name)
             if not ok then

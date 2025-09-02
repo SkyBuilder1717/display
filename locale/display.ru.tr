@@ -28,3 +28,5 @@ Render failed=Рендер провалился
 Fetching...=Получаем...
 # When render is done #
 Done=Готово
+# When already used saved picture is found #
+Saved picture found!=Найдена сохранённая картинка!
