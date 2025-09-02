@@ -24,7 +24,7 @@ end
 core.register_entity(modname .. ":pixel", {
     initial_properties = {
         visual = "sprite",
-        visual_size = {x=1, y=1},
+        visual_size = {x = 1, y = 1},
         textures = {TEX},
         use_texture_alpha = true,
         physical = false,
@@ -124,7 +124,28 @@ local function render_image(pos, tbl, size, rot, dir, name)
     return true
 end
 
-local function get_rotation(player) local dir = player:get_look_dir() if math.abs(dir.y) > math.abs(dir.x) and math.abs(dir.y) > math.abs(dir.z) then if dir.y > 0 then return {x=-math.pi/2, y=0, z=0} else return {x=math.pi/2, y=0, z=0} end elseif math.abs(dir.x) > math.abs(dir.z) then if dir.x > 0 then return {x=0, y=math.pi/2, z=0} else return {x=0, y=-math.pi/2, z=0} end else if dir.z > 0 then return {x=0, y=0, z=0} else return {x=0, y=math.pi, z=0} end end end
+local function get_rotation(player)
+    local dir = player:get_look_dir()
+    if math.abs(dir.y) > math.abs(dir.x) and math.abs(dir.y) > math.abs(dir.z) then
+        if dir.y > 0 then
+            return {x=-math.pi/2, y=0, z=0}
+        else
+            return {x=math.pi/2, y=0, z=0}
+        end
+    elseif math.abs(dir.x) > math.abs(dir.z) then
+        if dir.x > 0 then
+            return {x=0, y=math.pi/2, z=0}
+        else
+            return {x=0, y=-math.pi/2, z=0}
+        end
+    else
+        if dir.z > 0 then
+            return {x=0, y=0, z=0}
+        else
+            return {x=0, y=math.pi, z=0}
+        end
+    end
+end
 
 core.register_chatcommand(modname, {
     params = "<url> <size>",
@@ -149,7 +170,7 @@ core.register_chatcommand(modname, {
             dir = d.z > 0 and "z+" or "z-"
         end
         local url = BASE_URL .. "?url="..core.formspec_escape(img_url)
-        http.fetch({url=url, timeout=20}, function(res)
+        http.fetch({url = url, timeout = 20}, function(res)
             if res.timeout then
                 core.chat_send_player(name, pf.. S("Time out connection"))
                 return
