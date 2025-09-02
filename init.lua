@@ -21,7 +21,7 @@ local function alpha(a)
     return math.max(0, math.min(255, a))
 end
 
-core.register_entity(modname..":pixel", {
+core.register_entity(modname .. ":pixel", {
     initial_properties = {
         visual = "sprite",
         visual_size = {x=1, y=1},
@@ -37,10 +37,10 @@ core.register_entity(modname..":pixel", {
             local d = core.parse_json(sd)
             if d then
                 self.object:set_properties({
-                    textures={TEX},
-                    visual_size={x=d.size,y=d.size}
+                    textures = {TEX},
+                    visual_size = {x = d.size, y = d.size}
                 })
-                self.object:set_texture_mod("^[multiply:"..hex(d.r,d.g,d.b).."^[opacity:"..alpha(d.a))
+                self.object:set_texture_mod("^[multiply:" .. hex(d.r,d.g,d.b) .. "^[opacity:" .. alpha(d.a))
             end
         end
     end,
@@ -53,7 +53,7 @@ local function remove_image(name)
     local list = _G[modname].pixels[name]
     if list then
         for _, obj in ipairs(list) do
-            if obj and obj:get_luaentity() then
+            if obj and obj:get_luaentity() and obj:is_valid() then
                 obj:remove()
             end
         end
@@ -86,13 +86,13 @@ local function spawn_pixel(base, x, y, r,g,b,a, size, rot, dir, name)
     if o then
         local e = o:get_luaentity()
         if e then
-            e._data = {r=r,g=g,b=b,a=a,size=size}
+            e._data = {r = r, g = g, b = b, a = a, size = size}
             o:set_properties({
-                visual_size={x=size,y=size},
-                textures={TEX},
-                rotation=rot
+                visual_size = {x = size, y = size},
+                textures = {TEX},
+                rotation= rot
             })
-            o:set_texture_mod("^[multiply:"..hex(r,g,b).."^[opacity:"..alpha(a))
+            o:set_texture_mod("^[multiply:" .. hex(r,g,b) .. "^[opacity:" .. alpha(a))
             _G[modname].pixels[name] = _G[modname].pixels[name] or {}
             table.insert(_G[modname].pixels[name], o)
         end
