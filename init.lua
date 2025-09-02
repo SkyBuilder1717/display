@@ -61,8 +61,8 @@ local function remove_image(name)
     end
 end
 
-local function spawn_pixel(base, x, y, r,g,b,a, size, rot, dir, name)
-    local pos = {x=base.x, y=base.y, z=base.z}
+local function spawn_pixel(base, x, y, r, g, b, a, size, rot, dir, name)
+    local pos = {x = base.x, y = base.y, z = base.z}
     if dir == "y+" then
         pos.x = base.x + x*size
         pos.z = base.z + y*size
@@ -104,18 +104,27 @@ local function render_image(pos, tbl, size, rot, dir, name)
     local px = tbl.pixels
     if not (w and h and px and #px == w*h) then return false end
 
-    local flipped = false
-    if dir == "y+" or dir == "y-" then
-        flipped = true
+    local flipped_x = false
+    local flipped_y = false
+    if dir == "y+" then
+        flipped_x = true
+        flipped_y = true
+    end
+    if dir == "x+" or dir == "x-" then
+        flipped_x = true
     end
 
     for y=0,h-1 do
+        local iy = y
+        if flipped_y then
+            iy = h - 1 - y
+        end
         for x=0,w-1 do
             local ix = x
-            if flipped then
+            if flipped_x then
                 ix = w - 1 - x
             end
-            local p = px[y*w + ix + 1]
+            local p = px[iy*w + ix + 1]
             if p[4] > 0 then
                 spawn_pixel(pos, x, y, p[1], p[2], p[3], p[4], size, rot, dir, name)
             end
