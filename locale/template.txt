@@ -28,3 +28,5 @@ Render failed=
 Fetching...=
 # When render is done #
 Done=
+# When already used saved picture is found #
+Saved picture found!=
