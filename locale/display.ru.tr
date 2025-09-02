@@ -1,0 +1,30 @@
+# textdomain: display
+
+# ContentDB
+Display=Отображение
+Adds command to display URL images.=Добавляет команду на отображение URL картинок.
+
+# Command Description
+Render url image=Рендер url картинки
+
+# Errors
+# When console is trying to run command #
+No player=Нет игрока
+# When mod doesn't have HTTP access #
+HTTP not available=HTTP не доступен
+# When connection time with server is out #
+Time out connection=Тайм-аут соединения
+# When server gives other HTTP result, not the 200 one #
+HTTP error=Ошибка HTTP
+# When server gives bad JSON #
+Bad JSON=Bad JSON
+# When server gives error while converting image to JSON #
+Server error: @1=Ошибка сервера: @1
+# When failed to render image #
+Render failed=Рендер провалился
+
+# Messages
+# When command through all the checks and ready to fetch #
+Fetching...=Получаем...
+# When render is done #
+Done=Готово

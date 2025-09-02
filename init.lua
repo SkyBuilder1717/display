@@ -40,7 +40,7 @@ core.register_entity(modname .. ":pixel", {
                     textures = {TEX},
                     visual_size = {x = d.size, y = d.size}
                 })
-                self.object:set_texture_mod("^[multiply:" .. hex(d.r,d.g,d.b) .. "^[opacity:" .. alpha(d.a))
+                self.object:set_texture_mod("^[multiply:" .. hex(d.r, d.g, d.b) .. "^[opacity:" .. alpha(d.a))
             end
         end
     end,
@@ -82,7 +82,7 @@ local function spawn_pixel(base, x, y, r,g,b,a, size, rot, dir, name)
         pos.x = base.x + x*size
         pos.y = base.y - y*size
     end
-    local o = core.add_entity(pos, modname..":pixel")
+    local o = core.add_entity(pos, modname .. ":pixel")
     if o then
         local e = o:get_luaentity()
         if e then
@@ -92,7 +92,7 @@ local function spawn_pixel(base, x, y, r,g,b,a, size, rot, dir, name)
                 textures = {TEX},
                 rotation= rot
             })
-            o:set_texture_mod("^[multiply:" .. hex(r,g,b) .. "^[opacity:" .. alpha(a))
+            o:set_texture_mod("^[multiply:" .. hex(r, g, b) .. "^[opacity:" .. alpha(a))
             _G[modname].pixels[name] = _G[modname].pixels[name] or {}
             table.insert(_G[modname].pixels[name], o)
         end
@@ -131,12 +131,12 @@ core.register_chatcommand(modname, {
     description = S("Render url image"),
     privs = {server=true},
     func = function(name, param)
+        local player = core.get_player_by_name(name)
+        if not player then return false, S("No player") end
         if not http then return false, S("HTTP not available") end
         local img_url, size_s = param:match("^(%S+)%s+(%S+)$")
         if not img_url or not size_s then return false end
         local size = tonumber(size_s) or 0.1
-        local player = core.get_player_by_name(name)
-        if not player then return false, S("No player") end
         local pos = vector.round(player:get_pos()); pos.y = pos.y + 1
         local rot = get_rotation(player)
         local dir
