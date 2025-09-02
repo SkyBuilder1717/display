@@ -182,7 +182,7 @@ core.register_chatcommand(modname, {
         local url = BASE_URL .. "?url="..core.formspec_escape(img_url)
         local tbl = _G[modname].saved_pictures[url]
         if tbl then
-            core.chat_send_player(name, S("Saved picture found!"))
+            core.chat_send_player(name, pf.. S("Saved picture found!"))
             remove_image(name)
             local ok = render_image(pos, tbl, size, rot, dir, name)
             if not ok then
