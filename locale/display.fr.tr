@@ -25,8 +25,8 @@ Render failed=L'image n'a pas pu être affichée
 
 # Messages
 # When command through all the checks and ready to fetch #
-Fetching...=
+Fetching...=Chargement...
 # When render is done #
-Done=
+Done=Succès !
 # When already used saved picture is found #
-Saved picture found!=
+Saved picture found!=Image déjà utilisée trouvée !
