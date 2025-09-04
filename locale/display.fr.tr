@@ -1,1 +1,32 @@
-a
+# textdomain: display
+
+# ContentDB
+Display=Display
+Adds command to display URL images.= Ajoute des commandes pour afficher des images en ligne via un lien.
+
+# Command Description
+Render url image=Affiche l'image via un lien
+
+# Errors
+# When console is trying to run command #
+No player=Pas de joueur
+# When mod doesn't have HTTP access #
+HTTP not available=Connexion HTTP non disponible/non autorisée
+# When connection time with server is out #
+Time out connection=Connexion échouée : le site n'a pas répondu.
+# When server gives other HTTP result, not the 200 one #
+HTTP error=Erreur HTTP
+# When server gives bad JSON #
+Bad JSON=Le serveur a renvoyé un mauvais fichier .JSON
+# When server gives error while converting image to JSON #
+Server error: @1= Erreur interne au serveur : @1
+# When failed to render image #
+Render failed=L'image n'a pas pu être affichée
+
+# Messages
+# When command through all the checks and ready to fetch #
+Fetching...=
+# When render is done #
+Done=
+# When already used saved picture is found #
+Saved picture found!=
