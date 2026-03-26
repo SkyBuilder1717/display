@@ -6,7 +6,7 @@ _G[modname] = {
     saved_pictures = {}
 }
 
-local BASE_URL = core.settings:get(modname .. ".base_url") or "https://skybuilder.synology.me/display/convert"
+local BASE_URL = core.settings:get(modname .. ".base_url") or "https://skybuilder1717.ru/display/convert"
 
 local S = _G[modname].S
 
@@ -157,66 +157,76 @@ local function get_rotation(player)
     end
 end
 
+_G[modname].render = function(name, d, pos, url)
+    local img_url, size_s = url:match("^(%S+)%s+(%S+)$")
+    if not img_url or not size_s then
+        return false
+    end
+    local size = tonumber(size_s) or 0.1
+    pos = vector.round(pos); pos.y = pos.y + 1
+    local rot = get_rotation(player)
+    local dir
+    if math.abs(d.y) > math.abs(d.x) and math.abs(d.y) > math.abs(d.z) then
+        dir = d.y > 0 and "y+" or "y-"
+    elseif math.abs(d.x) > math.abs(d.z) then
+        dir = d.x > 0 and "x+" or "x-"
+    else
+        dir = d.z > 0 and "z+" or "z-"
+    end
+    url = BASE_URL .. "?url="..core.formspec_escape(img_url)
+    local tbl = _G[modname].saved_pictures[url]
+    if tbl then
+        core.chat_send_player(name, pf.. S("Saved picture found!"))
+        remove_image(name)
+        local ok = render_image(pos, tbl, size, rot, dir, name)
+        if not ok then
+            return false, pf.. S("Render failed")
+        end
+        return true, pf.. S("Done")
+    end
+    http.fetch({url = url, timeout = 20}, function(res)
+        if res.timeout then
+            core.chat_send_player(name, pf.. S("Time out connection"))
+            return
+        end
+        if not res.succeeded or res.code ~= 200 then
+            core.chat_send_player(name, pf.. S("HTTP error"))
+            return
+        end
+        local tbl = core.parse_json(res.data)
+        if not tbl then
+            core.chat_send_player(name, pf.. S("Bad JSON"))
+            return
+        end
+        if tbl.error then
+            core.chat_send_player(name, pf.. S("Server error: @1", tbl.error))
+            return
+        end
+        _G[modname].saved_pictures[url] = tbl
+        remove_image(name)
+        local ok = render_image(pos, tbl, size, rot, dir, name)
+        if not ok then
+            core.chat_send_player(name, pf.. S("Render failed"))
+            return
+        end
+        core.chat_send_player(name, pf.. S("Done"))
+    end)
+    return true, S("Fetching...")
+end
+
 core.register_chatcommand(modname, {
     params = "<url> <size>",
     description = S("Render url image"),
     privs = {server=true},
     func = function(name, param)
         local player = core.get_player_by_name(name)
-        if not player then return false, S("No player") end
-        if not http then return false, S("HTTP not available") end
-        local img_url, size_s = param:match("^(%S+)%s+(%S+)$")
-        if not img_url or not size_s then return false end
-        local size = tonumber(size_s) or 0.1
-        local pos = vector.round(player:get_pos()); pos.y = pos.y + 1
-        local rot = get_rotation(player)
-        local dir
-        local d = player:get_look_dir()
-        if math.abs(d.y) > math.abs(d.x) and math.abs(d.y) > math.abs(d.z) then
-            dir = d.y > 0 and "y+" or "y-"
-        elseif math.abs(d.x) > math.abs(d.z) then
-            dir = d.x > 0 and "x+" or "x-"
-        else
-            dir = d.z > 0 and "z+" or "z-"
+        if not player then
+            return false, S("No player")
         end
-        local url = BASE_URL .. "?url="..core.formspec_escape(img_url)
-        local tbl = _G[modname].saved_pictures[url]
-        if tbl then
-            core.chat_send_player(name, pf.. S("Saved picture found!"))
-            remove_image(name)
-            local ok = render_image(pos, tbl, size, rot, dir, name)
-            if not ok then
-                return false, pf.. S("Render failed")
-            end
-            return true, pf.. S("Done")
+        if not http then
+            return false, S("HTTP not available")
         end
-        http.fetch({url = url, timeout = 20}, function(res)
-            if res.timeout then
-                core.chat_send_player(name, pf.. S("Time out connection"))
-                return
-            end
-            if not res.succeeded or res.code ~= 200 then
-                core.chat_send_player(name, pf.. S("HTTP error"))
-                return
-            end
-            local tbl = core.parse_json(res.data)
-            if not tbl then
-                core.chat_send_player(name, pf.. S("Bad JSON"))
-                return
-            end
-            if tbl.error then
-                core.chat_send_player(name, pf.. S("Server error: @1", tbl.error))
-                return
-            end
-            _G[modname].saved_pictures[url] = tbl
-            remove_image(name)
-            local ok = render_image(pos, tbl, size, rot, dir, name)
-            if not ok then
-                core.chat_send_player(name, pf.. S("Render failed"))
-                return
-            end
-            core.chat_send_player(name, pf.. S("Done"))
-        end)
-        return true, S("Fetching...")
+        local bool, msg = _G[modname].render(player, param)
+        return bool, msg
     end
 })
