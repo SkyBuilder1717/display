@@ -157,14 +157,13 @@ local function get_rotation(player)
     end
 end
 
-_G[modname].render = function(name, d, pos, url)
+_G[modname].render = function(name, d, rot, pos, url)
     local img_url, size_s = url:match("^(%S+)%s+(%S+)$")
     if not img_url or not size_s then
         return false
     end
     local size = tonumber(size_s) or 0.1
     pos = vector.round(pos); pos.y = pos.y + 1
-    local rot = get_rotation(player)
     local dir
     if math.abs(d.y) > math.abs(d.x) and math.abs(d.y) > math.abs(d.z) then
         dir = d.y > 0 and "y+" or "y-"
@@ -226,7 +225,7 @@ core.register_chatcommand(modname, {
         if not http then
             return false, S("HTTP not available")
         end
-        local bool, msg = _G[modname].render(player, param)
+        local bool, msg = _G[modname].render(name, player:get_look_dir(), get_rotation(player), player:get_pos(), param)
         return bool, msg
     end
 })
